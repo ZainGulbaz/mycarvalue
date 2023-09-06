@@ -57,38 +57,12 @@ export class UsersService {
           
     }
 
-    async findOne(id:number,res:ExpressResponse):Promise<Response>{
-      let responsePayload:Response=initializeResponsePayload();
-      try{
-
+    async findOne(id:number):Promise<User>{
         let user= await this.userRepository.findOne({where:{id}});
-        if(user)
-        {
-          responsePayload.data={
-            user
-          };
-          responsePayload.statusCode=HttpStatus.FOUND;
-          responsePayload.message.push(StringMessages.user.single_user_found);
-          return;
-        }
-
-        throw new Error(StringMessages.user.single_user_not_found_database);         
-      }
-      catch(err)
-      {
-        responsePayload.statusCode=HttpStatus.NOT_FOUND;
-        responsePayload.message.push(StringMessages.user.single_user_not_found);
-        responsePayload.message.push(err.message);
-        return;
-      }
-      finally{
-        res.status(responsePayload.statusCode);
-        return responsePayload;
-
-      }
+        return user;
     }
 
-    async find(email:string,res:ExpressResponse):Promise<Response>{
+    async find(email:string):Promise<Response>{
       let responsePayload=initializeResponsePayload();
       try{
         let users= await this.userRepository.find({where:{email}})
@@ -112,7 +86,6 @@ export class UsersService {
            responsePayload.message.push(err.message);
       }
       finally{
-        res.status(responsePayload.statusCode);
         return responsePayload;
       }
 
@@ -147,7 +120,6 @@ export class UsersService {
       catch(err)
       {  
 
-        console.error(err);
         
         if(err.driverError.errno==DBErrors.Unique_Error){
           responsePayload.message.push(StringMessages.user.user_email_already_exists);
@@ -165,38 +137,20 @@ export class UsersService {
     }
 
     async remove(id:number){
-
-      let responsePayload = initializeResponsePayload();
-      try{
         let user= await this.userRepository.findOne({where:{id}});
+        return user;
+    }
 
-        if(!user){
-          responsePayload.message.push(StringMessages.user.single_user_not_found);
-          throw new Error(StringMessages.user.single_user_not_found_database);
-        }
+    async findUserByEmail(email:string):Promise<User>{
+      try{
 
-        let deletedUser= await this.userRepository.remove(user);
-        
-        if(deletedUser.email)
-        {
-          responsePayload.message.push(StringMessages.user.delete_user_success);
-          responsePayload.statusCode=HttpStatus.OK;
-          responsePayload.data={user:deletedUser};
-          return;
-        }
-
-        else throw new Error(StringMessages.user.delete_user_database_error);
+        const user=await this.userRepository.findOne({where:{email}});
+        return user;
       
       }
-      catch(err){
-
-        responsePayload.message.push(StringMessages.user.delete_user_fail);
-        responsePayload.message.push(err.message);
-        responsePayload.statusCode=HttpStatus.BAD_REQUEST;
-        
-      }
-      finally{
-            return responsePayload;
+      catch(err)
+      {
+        throw new Error(StringMessages.user.user_database_error);
       }
     }
 }

@@ -15,8 +15,18 @@ const StringMessages = {
     update_user_fail:"The user cannot be updated",
     delete_user_success:"The user has been deleted successfully",
     delete_user_fail:"The user cannot be deleted",
-    delete_user_database_error:"The user is unable to be deleted in the database"  
-  },
+    delete_user_database_error:"The user is unable to be deleted in the database" , 
+    signup_failure:"The user cannot sign up",
+    signup_success:"The user has been signed up successfully",
+    login_email_failure:"The user with this email does not exist",
+    login_failure:"The user cannot login successfully",
+    login_success:"The user is logged in successfully",
+    password_verfication_failure:"Unable to verify user's passsword",
+    incorrect_password:"Your password is incorrect",
+    unauthorized:"You are unauthorized for this request"
+    
+  }
+  
 } as const;
 
 export default StringMessages;
