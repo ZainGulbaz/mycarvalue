@@ -1,4 +1,4 @@
-import { Controller,Post,Get,Put,Delete,Param,Query,Body,Res,Session} from '@nestjs/common';
+import { Controller,Post,Get,Put,Param,Query,Body,Res,Session,UseInterceptors,UseGuards} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthService } from './auth-user.service';
 import { CreateUserDto } from './dtos/user-create.dto';
@@ -9,9 +9,11 @@ import { Serialize } from 'src/interceptors/serialize.interceptor';
 import {Response} from "express";
 import { UserInterceptorDto } from './dtos/user-interceptor.dto';
 import { GetUser } from './decorator/user-get.decorator';
-import { GetUserInterceptor } from './interceptors/get-user.interceptor';
+import { GetUserInterceptorClass } from './interceptors/get-user.interceptor';
+import { AuthGuard } from 'src/guards/auth.guard';
 
-
+@UseInterceptors(GetUserInterceptorClass)
+@UseGuards(AuthGuard)
 @Controller()
 export class UsersController {
 
@@ -59,9 +61,9 @@ export class UsersController {
         
     }
 
-    @GetUserInterceptor()
     @Get("whoami")
     async whoami(@GetUser() user:any){
+        console.log("user===->",user);
         return user;
     }
 
